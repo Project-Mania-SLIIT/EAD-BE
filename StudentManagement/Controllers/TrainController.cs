@@ -22,6 +22,7 @@ namespace StudentManagement.Controllers
         [HttpGet]
         public ActionResult<List<Train>> Get()
         {
+            //get all train
             return trainService.Get();
         }
 
@@ -30,6 +31,7 @@ namespace StudentManagement.Controllers
         [HttpPost]
         public ActionResult<Train> Post([FromBody] Train train)
         {
+            //create train
             trainService.Create(train);
 
             return CreatedAtAction(nameof(Get), new { id = train.Id }, train);
@@ -39,11 +41,12 @@ namespace StudentManagement.Controllers
         [HttpPut("status")]
         public ActionResult UpdateStatus([FromQuery] string id, [FromBody] Train t)
         {
+            //validation check
             if (string.IsNullOrEmpty(id) || string.IsNullOrEmpty(t.Status))
             {
                 return BadRequest("Train Id and new status must be provided.");
             }
-
+            //check train availability
             var train = trainService.GetById(id);
 
             if (train == null)
@@ -54,6 +57,7 @@ namespace StudentManagement.Controllers
             // Check if there are bookings for the train
             if (t.Status == "Deactive")
             {
+                //check is this train has active bookings
                 bool hasBookings = bookingService.HasBookingsForDateOrFuture(id, DateTime.Today);
 
                 if (hasBookings)

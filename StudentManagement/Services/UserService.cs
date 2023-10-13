@@ -7,7 +7,7 @@ namespace StudentManagement.Services
     public class UserService : IUserService
     {
         private readonly IMongoCollection<User> _user;
-
+        //db connection
         public UserService(IUserStoreDatabaseSettings settings, IMongoClient mongoClient)
         {
             var database = mongoClient.GetDatabase(settings.DatabaseName);
@@ -16,27 +16,32 @@ namespace StudentManagement.Services
 
         public User Create(User user)
         {
+            //create user
             _user.InsertOne(user);
             return user;
         }
 
         public List<User> Get()
         {
+            //get all user
             return _user.Find(user => true).ToList();
         }
 
         public User Get(string id)
         {
+            //get user user by id
             return _user.Find(user => user.Id == id).FirstOrDefault();
         }
 
         public void Remove(string id)
         {
+            //delete user by id
             _user.DeleteOne(user => user.Id == id);
         }
 
         public void Update(string id, User user)
         {
+            //check user availability
             var existingUser = _user.Find(x => x.Id == id).FirstOrDefault();
 
             if (existingUser == null)
@@ -142,22 +147,26 @@ namespace StudentManagement.Services
         {
             using (var hmac = new System.Security.Cryptography.HMACSHA512(salt))
             {
+                //hash password
                 return hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
             }
         }
 
         public User GetUserDetails(string nic)
         {
+            //get user details by nic
             return _user.Find(u => u.Nic == nic).FirstOrDefault();
         }
 
         public User GetById(string userId)
         {
+            //get user details by id
             return _user.Find(user => user.Id == userId).FirstOrDefault();
         }
 
         public void UpdateStatus(string userId, string newStatus)
         {
+            //check user availability
             var existingUser = _user.Find(x => x.Id == userId).FirstOrDefault();
 
             if (existingUser == null)
@@ -165,7 +174,7 @@ namespace StudentManagement.Services
                 // Handle the case where the train with the provided ID doesn't exist
                 throw new Exception("User not found.");
             }
-
+            //update user status
             existingUser.Status = newStatus;
 
             _user.ReplaceOne(x => x.Id == userId, existingUser);

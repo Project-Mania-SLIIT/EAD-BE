@@ -3,6 +3,7 @@ using MongoDB.Bson;
 
 namespace StudentManagement.Models
 {
+    //create train model
     public class Train
     {
         [BsonId]

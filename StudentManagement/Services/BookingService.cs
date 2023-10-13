@@ -46,7 +46,15 @@ namespace StudentManagement.Services
         public List<Booking> Get(string userId)
         {
             var filter = Builders<Booking>.Filter.Eq("UserId", userId);
-            return _booking.Find(filter).ToList();
+            var bookings = _booking.Find(filter).ToList();
+
+            // Populate train data for each booking
+            foreach (var booking in bookings)
+            {
+                booking.Train = _trainService.GetById(booking.TrainId);
+            }
+
+            return bookings;
         }
 
         private int GetTotalBookedSeats(string trainId, string date)

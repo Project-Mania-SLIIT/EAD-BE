@@ -10,7 +10,7 @@ namespace StudentManagement.Services
     public class TrainService : ITrainService
     {
         private readonly IMongoCollection<Train> _train;
-
+        //db connection
         public TrainService(ITrainStoreDatabaseSetting settings, IMongoClient mongoClient)
         {
             var database = mongoClient.GetDatabase(settings.DatabaseName);
@@ -38,16 +38,19 @@ namespace StudentManagement.Services
 
         public List<Train> Get()
         {
+            //find all trains
             return _train.Find(train => true).ToList();
         }
 
         public Train GetById(string trainId)
         {
+            //get train by id
             return _train.Find(train => train.Id == trainId).FirstOrDefault();
         }
 
         public void UpdateStatus(string trainId, string newStatus)
         {
+            //check train availability
             var existingTrain = _train.Find(x => x.Id == trainId).FirstOrDefault();
 
             if (existingTrain == null)
@@ -55,7 +58,7 @@ namespace StudentManagement.Services
                 // Handle the case where the train with the provided ID doesn't exist
                 throw new Exception("Train not found.");
             }
-
+            //update trsin status
             existingTrain.Status = newStatus;
 
             _train.ReplaceOne(x => x.Id == trainId, existingTrain);

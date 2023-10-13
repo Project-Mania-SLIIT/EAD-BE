@@ -20,6 +20,7 @@ namespace StudentManagement.Controllers
         [HttpGet]
         public ActionResult<List<Booking>> Get(string userId)
         {
+            //get booking details by id
             return bookingService.Get(userId);
         }
 
@@ -29,7 +30,7 @@ namespace StudentManagement.Controllers
         public ActionResult<Booking> Post([FromBody] Booking booking)
         {
             try
-            {
+            {   //crete new booking
                 var createdBooking = bookingService.Create(booking);
                 return CreatedAtAction(nameof(Get), new { id = createdBooking.Id }, createdBooking);
             }
@@ -44,7 +45,7 @@ namespace StudentManagement.Controllers
         public ActionResult<Booking> Update([FromBody] Booking booking)
         {
             try
-            {
+            {   //update booking
                 var updatedBooking = bookingService.Update(booking);
                 return CreatedAtAction(nameof(Get), new { id = updatedBooking.Id }, updatedBooking);
             }
@@ -58,7 +59,7 @@ namespace StudentManagement.Controllers
         [HttpDelete("{id}")]
         public ActionResult Delete(string id)
         {
-
+            //delete booking
             bookingService.Delete(id);
 
             return Ok($"Booking with Id = {id} deleted");

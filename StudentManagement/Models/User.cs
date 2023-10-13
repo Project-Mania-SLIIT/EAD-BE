@@ -3,6 +3,7 @@ using MongoDB.Bson;
 
 namespace StudentManagement.Models
 {
+    //create user model
     public class User
     {
         [BsonId]

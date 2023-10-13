@@ -3,6 +3,7 @@ using MongoDB.Bson;
 
 namespace StudentManagement.Models
 {
+    //create booking model
     public class Booking
     {
         [BsonId]
@@ -23,5 +24,9 @@ namespace StudentManagement.Models
 
         [BsonElement("Price")]
         public int Price { get; set; } = 0;
+
+        // Add a property to store train information
+        [BsonIgnore] // Ignore this property for MongoDB serialization
+        public Train Train { get; set; }
     }
 }

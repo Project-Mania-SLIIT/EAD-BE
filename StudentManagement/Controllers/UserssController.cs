@@ -20,45 +20,29 @@ namespace StudentManagement.Controllers
         [HttpGet]
         public ActionResult<List<User>> Get()
         {
+            //return all users
             return userService.Get();
         }
 
-        // GET api/<UserssController>/5
-        [HttpGet("{id}")]
-        public string Get(int id)
-        {
-            return "value";
-        }
-
-        // POST api/<UserssController>
-        [HttpPost]
-        public void Post([FromBody] string value)
-        {
-        }
 
         // PUT api/<UserssController>/5
         [HttpPut("{id}")]
         public ActionResult Put(string id, [FromBody] User u)
         {
+            //check user availability
             var user = userService.GetById(id);
 
             if (user == null)
             {
                 return NotFound("User not found.");
-            }
-
+            } 
+            //if user available update user
             userService.Update(id, u);
 
             return NoContent();
 
 
 
-        }
-
-        // DELETE api/<UserssController>/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
         }
 
 
@@ -83,7 +67,8 @@ namespace StudentManagement.Controllers
                     {
                         message = "Authentication successful",
                         userId = userDetails.Id,
-                        role = userDetails.Role
+                        role = userDetails.Role,
+                        name = userDetails.Name
                     };
                     return Ok(response);
                 }
@@ -105,13 +90,19 @@ namespace StudentManagement.Controllers
         [HttpPost("register")]
         public ActionResult<User> Register([FromBody]  UserRegistrationRequest user)
         {
-            try
-            {
+          
                 // Validate registration data (e.g., check for required fields)
                 if (string.IsNullOrEmpty(user.Name) || string.IsNullOrEmpty(user.NIC) || string.IsNullOrEmpty(user.Password) || string.IsNullOrEmpty(user.Email) || string.IsNullOrEmpty(user.Mobile) || string.IsNullOrEmpty(user.Role))
                 {
                     return BadRequest("Invalid registration data.");
                 }
+            //check user availability
+             User u = userService.GetUserDetails(user.NIC.ToString());
+
+            if(u != null)
+            {
+                return BadRequest("Nic already Registered");
+            }
 
 
                 // Create the user and store the hashed password
@@ -119,25 +110,19 @@ namespace StudentManagement.Controllers
 
                 // Return a success response
                 return Ok("Registration successful...");
-            }
-            catch (Exception ex)
-            {
-                // Handle any exceptions, e.g., database errors
-                // You can log the exception or perform additional error handling here
-                Console.WriteLine(ex.ToString());
-                return StatusCode(500, "Internal server error");
-            }
+     
         }
 
         // PUT api/train/status
         [HttpPut("status")]
         public ActionResult UpdateStatus([FromQuery] string id, [FromBody] Train t)
         {
+            //add validation
             if (string.IsNullOrEmpty(id) || string.IsNullOrEmpty(t.Status))
             {
                 return BadRequest("User Id and new status must be provided.");
             }
-
+            //check user availability
             var user = userService.GetById(id);
 
             if (user == null)
@@ -145,6 +130,7 @@ namespace StudentManagement.Controllers
                 return NotFound("User not found.");
             }
 
+            //if user available update status
             userService.UpdateStatus(id, t.Status);
 
             return NoContent();
